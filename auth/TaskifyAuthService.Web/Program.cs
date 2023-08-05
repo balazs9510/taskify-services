@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using TaskifyAuthService.DAL;
-using TaskifyAuthService.Utils;
+using Taskify.DAL;
+using Taskify.Utils.Extensions;
+using Taskify.Utils.Middlewares;
+using TaskifyAuthService.Web.Services;
+using TaskifyAuthService.Web.Utils;
 
-namespace TaskifyAuthService
+namespace TaskifyAuthService.Web
 {
     public class Program
     {
@@ -16,10 +17,12 @@ namespace TaskifyAuthService
             var connectionString = configuration.GetConnectionString("TaskifyDb");
 
             builder.Services.AddControllers();
-            builder.Services.AddDbContext<AuthDbContext>(options => options.UseNpgsql(connectionString));
+            builder.Services.AddSingleton<IJWTManagerRepository, JWTManagerRepository>();
+            builder.Services.AddDbContext<TaskifyDbContext>(options => options.UseNpgsql(connectionString));
+            builder.AddLogger();
 
             builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddEntityFrameworkStores<AuthDbContext>();
+                .AddEntityFrameworkStores<TaskifyDbContext>();
 
             if (builder.Environment.IsDevelopment())
             {
@@ -28,6 +31,7 @@ namespace TaskifyAuthService
             }
 
             var app = builder.Build();
+            app.UseExceptionHandlingMiddleware();
 
             if (app.Environment.IsDevelopment())
             {

@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TaskifyAuthService.Models
+namespace TaskifyAuthService.Web.Models
 {
-    public class LoginModel
+    public class RegisterModel
     {
         [Required]
         public string UserName { get; set; }

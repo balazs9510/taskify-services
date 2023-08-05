@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace TaskifyAuthService.Utils
+namespace TaskifyAuthService.Web.Utils
 {
     public static class AdminUserInitializer
     {
