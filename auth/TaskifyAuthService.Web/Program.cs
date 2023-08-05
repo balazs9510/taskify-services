@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Taskify.DAL;
 using Taskify.Utils.Extensions;
+using Taskify.Utils.Logging;
 using Taskify.Utils.Middlewares;
 using TaskifyAuthService.Web.Services;
 using TaskifyAuthService.Web.Utils;
@@ -18,12 +19,14 @@ namespace TaskifyAuthService.Web
 
             builder.Services.AddControllers();
             builder.Services.AddSingleton<IJWTManagerRepository, JWTManagerRepository>();
-            builder.Services.AddDbContext<TaskifyDbContext>(options => options.UseNpgsql(connectionString));
+            builder.Services
+                .AddDbContext<TaskifyDbContext>(options => options.UseNpgsql(connectionString));
             builder.AddLogger();
 
-            builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+            builder.Services
+                .AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<TaskifyDbContext>();
-
+            builder.Services.AddSingleton<ILoggerProvider, DbLoggerProvider>();
             if (builder.Environment.IsDevelopment())
             {
                 builder.Services.AddEndpointsApiExplorer();

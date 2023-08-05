@@ -6,6 +6,7 @@ using Taskify.DAL.Models;
 using Taskify.Utils.Services;
 using TaskifyAuthService.Web.Models;
 using TaskifyAuthService.Web.Services;
+using Taskify.Utils.Extensions;
 
 namespace TaskifyAuthService.Web.Controllers
 {
@@ -18,17 +19,21 @@ namespace TaskifyAuthService.Web.Controllers
         private readonly TaskifyDbContext _authDbContext;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILoggerService _logger;
+        private readonly ILogger<AuthController> _defLogger;
+
         public AuthController(SignInManager<IdentityUser> signInManager,
             IJWTManagerRepository jWTManagerRepository,
             TaskifyDbContext authDb,
             UserManager<IdentityUser> userManager,
-            ILoggerService loggerService)
+            ILoggerService loggerService,
+            ILogger<AuthController> defLogger)
         {
             _signInManager = signInManager;
             _jWTManager = jWTManagerRepository;
             _authDbContext = authDb;
             _logger = loggerService;
             _userManager = userManager;
+            _defLogger = defLogger;
         }
 
         [HttpPost(nameof(Login))]
@@ -64,6 +69,7 @@ namespace TaskifyAuthService.Web.Controllers
 
             if (result.Succeeded)
             {
+                _defLogger.LogInformation("Successful registration.");
                 await _logger.LogInfo("Successful registration.", model.UserName);
                 return Ok(new { message = "Successful registration." });
             }
